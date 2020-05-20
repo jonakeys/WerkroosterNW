@@ -8,6 +8,7 @@ package werkroosternw;
 /**
  * Dienst beheert alle eigenschappen van een Dienst, zoals naam, tijden en
  * opmerkingen.
+ *
  * @author Jonathan van der Steege (2020)
  */
 public class Dienst {
@@ -29,11 +30,7 @@ public class Dienst {
         this.naam = naam;
         this.tijdVan = tijdVan;
         this.tijdTot = tijdTot;
-        if (opmerkingen.contains("_")) {
-            this.opmerkingen = "";
-        } else {
-            this.opmerkingen = opmerkingen;
-        }
+        this.opmerkingen = opmerkingen;
     }
 
     public String geefNaam() {

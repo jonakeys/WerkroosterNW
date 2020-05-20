@@ -24,7 +24,7 @@ import javax.swing.table.*;
  */
 public class WerkroosterNWgui extends javax.swing.JFrame {
 
-    private final WerkroosterNW werkrooster = new WerkroosterNW();
+    private WerkroosterNW werkrooster = new WerkroosterNW();
     private MaandKalender kalender;
     private BestandStream bestandStream;
     private ArrayList<Dienst> dienstenWeek;
@@ -44,7 +44,8 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
     private JTable weekendTabel;
     private DefaultTableModel weekModel = new DefaultTableModel();
     private DefaultTableModel weekendModel = new DefaultTableModel();
-    private boolean nietOpgeslagenWijzigingen = false;
+    private boolean nietOpgeslagenBewerkingen = false;
+    private boolean nietOpgeslagenMaand = false;
 
     /**
      * Creates new form WerkroosterNWGUI
@@ -64,7 +65,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
      * de gebruiker de keuze het alsnog op te slaan.
      */
     private void afsluiten() {
-        if (nietOpgeslagenWijzigingen) {
+        if (nietOpgeslagenMaand) {
             wijzigingenDialog.setVisible(true);
         } else {
             dispose();
@@ -94,8 +95,6 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         resetTabellen();
         weekTabelPanel.add(weekTabelScrollPane);
         weekendTabelPanel.add(weekendTabelScrollPane);
-        pasDataToeKnop.setEnabled(false);
-        bewaarDataKnop.setEnabled(false);
         leesData();
     }
 
@@ -111,8 +110,9 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         overFrame = new javax.swing.JFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        okButton = new javax.swing.JButton();
         overWerkroosterNWLabel = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        okButton = new javax.swing.JButton();
         wijzigingenDialog = new javax.swing.JDialog();
         jaKnop = new javax.swing.JButton();
         annulerenKnop = new javax.swing.JButton();
@@ -120,9 +120,24 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         titelWijzigingenLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
-        topPanel = new javax.swing.JPanel();
+        bewerkenFrame = new javax.swing.JFrame();
+        dataOpslaanPanel = new javax.swing.JPanel();
+        leesDataKnop = new javax.swing.JButton();
+        pasDataToeKnop = new javax.swing.JButton();
+        annulerenDataKnop = new javax.swing.JButton();
+        okDataKnop = new javax.swing.JButton();
+        bewerkDienstenPanel = new javax.swing.JPanel();
+        weekTabelPanel = new javax.swing.JPanel();
+        weekKnoppenPanel = new javax.swing.JPanel();
+        voegToeWeekKnop = new javax.swing.JButton();
+        verwijderRijWeekKnop = new javax.swing.JButton();
+        weekendTabelPanel = new javax.swing.JPanel();
+        weekendKnoppenPanel = new javax.swing.JPanel();
+        voegToeWeekendKnop = new javax.swing.JButton();
+        verwijderRijWeekendKnop = new javax.swing.JButton();
+        bottomPanel = new javax.swing.JPanel();
         resetButton = new javax.swing.JButton();
-        titelLabel = new javax.swing.JLabel();
+        bewerkDataKnop = new javax.swing.JButton();
         overButton = new javax.swing.JButton();
         hoofdPanel = new javax.swing.JTabbedPane();
         maandTabPanel = new javax.swing.JPanel();
@@ -136,25 +151,15 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         uitvoerPanel = new javax.swing.JPanel();
         dienstKnoppenPanel = new javax.swing.JPanel();
         bewaarGegevensKnop = new javax.swing.JButton();
-        bewerkenTabPanel = new javax.swing.JPanel();
-        dataOpslaanPanel = new javax.swing.JPanel();
-        leesDataKnop = new javax.swing.JButton();
-        pasDataToeKnop = new javax.swing.JButton();
-        bewaarDataKnop = new javax.swing.JButton();
-        bewerkDienstenPanel = new javax.swing.JPanel();
-        weekTabelPanel = new javax.swing.JPanel();
-        weekKnoppenPanel = new javax.swing.JPanel();
-        voegToeWeekKnop = new javax.swing.JButton();
-        verwijderRijWeekKnop = new javax.swing.JButton();
-        weekendTabelPanel = new javax.swing.JPanel();
-        weekendKnoppenPanel = new javax.swing.JPanel();
-        voegToeWeekendKnop = new javax.swing.JButton();
-        verwijderRijWeekendKnop = new javax.swing.JButton();
-        statusTekstVeld = new javax.swing.JTextField();
+        topPanel = new javax.swing.JPanel();
+        titelLabel = new javax.swing.JLabel();
 
+        overFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         overFrame.setTitle("Over WerkroosterNW");
-        overFrame.setMinimumSize(new java.awt.Dimension(500, 500));
-        overFrame.setSize(new java.awt.Dimension(590, 575));
+        overFrame.setMinimumSize(new java.awt.Dimension(500, 490));
+        overFrame.setPreferredSize(new java.awt.Dimension(500, 490));
+        overFrame.setSize(new java.awt.Dimension(500, 490));
+        overFrame.getContentPane().setLayout(new java.awt.BorderLayout(5, 5));
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setMinimumSize(new java.awt.Dimension(526, 477));
@@ -166,9 +171,19 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setText("WerkroosterNW is gemaakt door Jonathan van der Steege in het voorjaar van \n2020 voor Dinesh Chan.\n\nMet dit programma kun je aan de hand van maand en jaar het werkrooster \ninvullen van de diensten die bij Nieuw Woelwijck gebruikt worden.\n\n\nLicentie-informatie:\n\nThis program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <https://www.gnu.org/licenses/>.");
-        jTextArea1.setBorder(null);
+        jTextArea1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jTextArea1.setOpaque(false);
         jScrollPane1.setViewportView(jTextArea1);
+
+        overFrame.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        overWerkroosterNWLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        overWerkroosterNWLabel.setText("WerkroosterNW");
+        overWerkroosterNWLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        overFrame.getContentPane().add(overWerkroosterNWLabel, java.awt.BorderLayout.PAGE_START);
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(526, 30));
+        jPanel1.setPreferredSize(new java.awt.Dimension(526, 30));
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -176,40 +191,9 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 okButtonActionPerformed(evt);
             }
         });
+        jPanel1.add(okButton);
 
-        overWerkroosterNWLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        overWerkroosterNWLabel.setText("WerkroosterNW");
-        overWerkroosterNWLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        javax.swing.GroupLayout overFrameLayout = new javax.swing.GroupLayout(overFrame.getContentPane());
-        overFrame.getContentPane().setLayout(overFrameLayout);
-        overFrameLayout.setHorizontalGroup(
-            overFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(overFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(overFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(overFrameLayout.createSequentialGroup()
-                        .addComponent(overWerkroosterNWLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overFrameLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overFrameLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(okButton)
-                .addContainerGap())
-        );
-        overFrameLayout.setVerticalGroup(
-            overFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(overFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(overWerkroosterNWLabel)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(okButton)
-                .addContainerGap())
-        );
+        overFrame.getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
         wijzigingenDialog.setTitle("Let op!");
         wijzigingenDialog.setSize(new java.awt.Dimension(421, 300));
@@ -284,9 +268,108 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        bewerkenFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        bewerkenFrame.setTitle("Bewerk diensten");
+        bewerkenFrame.setMinimumSize(new java.awt.Dimension(650, 600));
+        bewerkenFrame.setPreferredSize(new java.awt.Dimension(650, 600));
+        bewerkenFrame.setSize(new java.awt.Dimension(650, 600));
+
+        dataOpslaanPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        leesDataKnop.setText("Reset");
+        leesDataKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                leesDataKnopActionPerformed(evt);
+            }
+        });
+        dataOpslaanPanel.add(leesDataKnop);
+
+        pasDataToeKnop.setText("Toepassen");
+        pasDataToeKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pasDataToeKnopActionPerformed(evt);
+            }
+        });
+        dataOpslaanPanel.add(pasDataToeKnop);
+
+        annulerenDataKnop.setText("Annuleren");
+        annulerenDataKnop.setPreferredSize(new java.awt.Dimension(102, 24));
+        annulerenDataKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                annulerenDataKnopActionPerformed(evt);
+            }
+        });
+        dataOpslaanPanel.add(annulerenDataKnop);
+
+        okDataKnop.setText("OK");
+        okDataKnop.setPreferredSize(new java.awt.Dimension(102, 24));
+        okDataKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okDataKnopActionPerformed(evt);
+            }
+        });
+        dataOpslaanPanel.add(okDataKnop);
+
+        bewerkenFrame.getContentPane().add(dataOpslaanPanel, java.awt.BorderLayout.PAGE_END);
+
+        bewerkDienstenPanel.setLayout(new java.awt.GridLayout(2, 1));
+
+        weekTabelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Week", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 14))); // NOI18N
+        weekTabelPanel.setLayout(new java.awt.BorderLayout());
+
+        weekKnoppenPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        voegToeWeekKnop.setText("Voeg rij toe");
+        voegToeWeekKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                voegToeWeekKnopActionPerformed(evt);
+            }
+        });
+        weekKnoppenPanel.add(voegToeWeekKnop);
+
+        verwijderRijWeekKnop.setText("Verwijder geselecteerde rij");
+        verwijderRijWeekKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verwijderRijWeekKnopActionPerformed(evt);
+            }
+        });
+        weekKnoppenPanel.add(verwijderRijWeekKnop);
+
+        weekTabelPanel.add(weekKnoppenPanel, java.awt.BorderLayout.PAGE_START);
+
+        bewerkDienstenPanel.add(weekTabelPanel);
+
+        weekendTabelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Weekend", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 14))); // NOI18N
+        weekendTabelPanel.setLayout(new java.awt.BorderLayout());
+
+        weekendKnoppenPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        voegToeWeekendKnop.setText("Voeg rij toe");
+        voegToeWeekendKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                voegToeWeekendKnopActionPerformed(evt);
+            }
+        });
+        weekendKnoppenPanel.add(voegToeWeekendKnop);
+
+        verwijderRijWeekendKnop.setText("Verwijder geselecteerde rij");
+        verwijderRijWeekendKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verwijderRijWeekendKnopActionPerformed(evt);
+            }
+        });
+        weekendKnoppenPanel.add(verwijderRijWeekendKnop);
+
+        weekendTabelPanel.add(weekendKnoppenPanel, java.awt.BorderLayout.PAGE_START);
+
+        bewerkDienstenPanel.add(weekendTabelPanel);
+
+        bewerkenFrame.getContentPane().add(bewerkDienstenPanel, java.awt.BorderLayout.CENTER);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Werkrooster Nieuw Woelwijck");
-        setSize(new java.awt.Dimension(0, 0));
+        setMinimumSize(new java.awt.Dimension(800, 720));
+        setSize(new java.awt.Dimension(800, 720));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -296,8 +379,10 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             }
         });
 
-        topPanel.setName(""); // NOI18N
-        topPanel.setPreferredSize(new java.awt.Dimension(4, 4));
+        bottomPanel.setMinimumSize(new java.awt.Dimension(800, 40));
+        bottomPanel.setName(""); // NOI18N
+        bottomPanel.setPreferredSize(new java.awt.Dimension(800, 40));
+        bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         resetButton.setText("Reset");
         resetButton.addActionListener(new java.awt.event.ActionListener() {
@@ -305,9 +390,15 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 resetButtonActionPerformed(evt);
             }
         });
+        bottomPanel.add(resetButton);
 
-        titelLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        titelLabel.setText("Werkrooster voor diensten van Nieuw Woelwijck");
+        bewerkDataKnop.setText("Bewerk diensten");
+        bewerkDataKnop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bewerkDataKnopActionPerformed(evt);
+            }
+        });
+        bottomPanel.add(bewerkDataKnop);
 
         overButton.setText("Over WerkroosterNW...");
         overButton.addActionListener(new java.awt.event.ActionListener() {
@@ -315,30 +406,12 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 overButtonActionPerformed(evt);
             }
         });
+        bottomPanel.add(overButton);
 
-        javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
-        topPanel.setLayout(topPanelLayout);
-        topPanelLayout.setHorizontalGroup(
-            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(topPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(titelLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(resetButton)
-                .addGap(18, 18, 18)
-                .addComponent(overButton)
-                .addContainerGap())
-        );
-        topPanelLayout.setVerticalGroup(
-            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(topPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(resetButton)
-                    .addComponent(titelLabel)
-                    .addComponent(overButton))
-                .addContainerGap(13, Short.MAX_VALUE))
-        );
+        getContentPane().add(bottomPanel, java.awt.BorderLayout.SOUTH);
+
+        hoofdPanel.setMinimumSize(new java.awt.Dimension(0, 0));
+        hoofdPanel.setPreferredSize(new java.awt.Dimension(0, 0));
 
         maandTabPanel.setLayout(new java.awt.BorderLayout());
 
@@ -403,127 +476,21 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
 
         hoofdPanel.addTab("Diensten", dienstenTabPanel);
 
-        bewerkenTabPanel.setLayout(new java.awt.BorderLayout());
+        getContentPane().add(hoofdPanel, java.awt.BorderLayout.CENTER);
 
-        dataOpslaanPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Data"));
-        dataOpslaanPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        leesDataKnop.setText("Vernieuw gegevens");
-        leesDataKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                leesDataKnopActionPerformed(evt);
-            }
-        });
-        dataOpslaanPanel.add(leesDataKnop);
+        titelLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        titelLabel.setText("Werkrooster voor diensten van Nieuw Woelwijck");
+        topPanel.add(titelLabel);
 
-        pasDataToeKnop.setText("Voer wijzigingen door");
-        pasDataToeKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pasDataToeKnopActionPerformed(evt);
-            }
-        });
-        dataOpslaanPanel.add(pasDataToeKnop);
-
-        bewaarDataKnop.setText("Bewaar data");
-        bewaarDataKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bewaarDataKnopActionPerformed(evt);
-            }
-        });
-        dataOpslaanPanel.add(bewaarDataKnop);
-
-        bewerkenTabPanel.add(dataOpslaanPanel, java.awt.BorderLayout.PAGE_START);
-
-        bewerkDienstenPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Bewerk diensten"));
-        bewerkDienstenPanel.setLayout(new java.awt.GridLayout(2, 1));
-
-        weekTabelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Week", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 14))); // NOI18N
-        weekTabelPanel.setLayout(new java.awt.BorderLayout());
-
-        weekKnoppenPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        voegToeWeekKnop.setText("Voeg rij toe");
-        voegToeWeekKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                voegToeWeekKnopActionPerformed(evt);
-            }
-        });
-        weekKnoppenPanel.add(voegToeWeekKnop);
-
-        verwijderRijWeekKnop.setText("Verwijder geselecteerde rij");
-        verwijderRijWeekKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                verwijderRijWeekKnopActionPerformed(evt);
-            }
-        });
-        weekKnoppenPanel.add(verwijderRijWeekKnop);
-
-        weekTabelPanel.add(weekKnoppenPanel, java.awt.BorderLayout.PAGE_START);
-
-        bewerkDienstenPanel.add(weekTabelPanel);
-
-        weekendTabelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Weekend", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 14))); // NOI18N
-        weekendTabelPanel.setLayout(new java.awt.BorderLayout());
-
-        weekendKnoppenPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        voegToeWeekendKnop.setText("Voeg rij toe");
-        voegToeWeekendKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                voegToeWeekendKnopActionPerformed(evt);
-            }
-        });
-        weekendKnoppenPanel.add(voegToeWeekendKnop);
-
-        verwijderRijWeekendKnop.setText("Verwijder geselecteerde rij");
-        verwijderRijWeekendKnop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                verwijderRijWeekendKnopActionPerformed(evt);
-            }
-        });
-        weekendKnoppenPanel.add(verwijderRijWeekendKnop);
-
-        weekendTabelPanel.add(weekendKnoppenPanel, java.awt.BorderLayout.PAGE_START);
-
-        bewerkDienstenPanel.add(weekendTabelPanel);
-
-        bewerkenTabPanel.add(bewerkDienstenPanel, java.awt.BorderLayout.CENTER);
-
-        hoofdPanel.addTab("Bewerken", bewerkenTabPanel);
-
-        statusTekstVeld.setEditable(false);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
-                    .addComponent(hoofdPanel)
-                    .addComponent(statusTekstVeld))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hoofdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(statusTekstVeld, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+        getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void vulMaandButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vulMaandButtonActionPerformed
-        if (toonMaand()) {
-            statusTekstVeld.setText("Maand is gevuld");
-        }
+        toonMaand();
         bewaarGegevensKnop.setEnabled(false);
     }//GEN-LAST:event_vulMaandButtonActionPerformed
 
@@ -546,10 +513,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         maandTekstGebied.setText(tekstGebied);
         comboArray.clear();
         resetTabellen();
-        pasDataToeKnop.setEnabled(false);
-        bewaarDataKnop.setEnabled(false);
         leesData();
-        statusTekstVeld.setText("");
     }//GEN-LAST:event_resetButtonActionPerformed
 
     /**
@@ -567,11 +531,10 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         } catch (IOException e) {
 
         }
-        statusTekstVeld.setText("Gegevens opgeslagen in '" + bestandsnaam + "'");
     }//GEN-LAST:event_bewaarGegevensKnopActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        overFrame.setVisible(false);
+        overFrame.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void overButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_overButtonActionPerformed
@@ -584,23 +547,14 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
      *
      * @param evt
      */
-    private void bewaarDataKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bewaarDataKnopActionPerformed
-        String dataWeek, dataWeekend;
-        dataWeek = werkrooster.dataOpslaanDienstenWeek();
-        dataWeekend = werkrooster.dataOpslaanDienstenWeekend();
-        try {
-            bestandStream.saveData(dataWeek, dataWeekend);
-        } catch (IOException e) {
-
-        }
-        nietOpgeslagenWijzigingen = false;
-        statusTekstVeld.setText("Data opgeslagen");
-    }//GEN-LAST:event_bewaarDataKnopActionPerformed
+    private void okDataKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okDataKnopActionPerformed
+        pasDataToe();
+        leesData();
+        bewerkenFrame.dispose();
+    }//GEN-LAST:event_okDataKnopActionPerformed
 
     private void leesDataKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leesDataKnopActionPerformed
         leesData();
-        pasDataToeKnop.setEnabled(true);
-        statusTekstVeld.setText("Data ingelezen");
     }//GEN-LAST:event_leesDataKnopActionPerformed
 
     private void verwijderRijWeekKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verwijderRijWeekKnopActionPerformed
@@ -608,8 +562,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         if (geselecteerdeRij >= 0) {
             ((DefaultTableModel) weekTabel.getModel()).removeRow(geselecteerdeRij);
         }
-        pasDataToeKnop.setEnabled(true);
-        nietOpgeslagenWijzigingen = true;
+        nietOpgeslagenBewerkingen = true;
     }//GEN-LAST:event_verwijderRijWeekKnopActionPerformed
 
     private void verwijderRijWeekendKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verwijderRijWeekendKnopActionPerformed
@@ -617,37 +570,32 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         if (geselecteerdeRij >= 0) {
             ((DefaultTableModel) weekendTabel.getModel()).removeRow(geselecteerdeRij);
         }
-        pasDataToeKnop.setEnabled(true);
-        nietOpgeslagenWijzigingen = true;
+        nietOpgeslagenBewerkingen = true;
     }//GEN-LAST:event_verwijderRijWeekendKnopActionPerformed
 
     private void voegToeWeekKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voegToeWeekKnopActionPerformed
         int geselecteerdeRij = weekTabel.getSelectedRow();
         if (geselecteerdeRij >= 0) {
-            weekModel.insertRow(geselecteerdeRij, new Object[]{});
+            weekModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", ""});
         } else {
-            weekModel.addRow(new Object[]{});
+            weekModel.addRow(new Object[]{"", "", "", ""});
         }
-        pasDataToeKnop.setEnabled(true);
-        nietOpgeslagenWijzigingen = true;
+        nietOpgeslagenBewerkingen = true;
     }//GEN-LAST:event_voegToeWeekKnopActionPerformed
 
     private void voegToeWeekendKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voegToeWeekendKnopActionPerformed
         int geselecteerdeRij = weekendTabel.getSelectedRow();
         if (geselecteerdeRij >= 0) {
-            weekendModel.insertRow(geselecteerdeRij, new Object[]{});
+            weekendModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", ""});
         } else {
-            weekendModel.addRow(new Object[]{});
+            weekendModel.addRow(new Object[]{"", "", "", ""});
         }
-        pasDataToeKnop.setEnabled(true);
-        nietOpgeslagenWijzigingen = true;
+        nietOpgeslagenBewerkingen = true;
     }//GEN-LAST:event_voegToeWeekendKnopActionPerformed
 
     private void pasDataToeKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasDataToeKnopActionPerformed
         pasDataToe();
-        bewaarDataKnop.setEnabled(true);
-        nietOpgeslagenWijzigingen = true;
-        statusTekstVeld.setText("Data toegepast");
+        leesData();
     }//GEN-LAST:event_pasDataToeKnopActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
@@ -665,6 +613,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
 
     private void jaKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jaKnopActionPerformed
         pasDataToe();
+        /*
         String dataWeek, dataWeekend;
         dataWeek = werkrooster.dataOpslaanDienstenWeek();
         dataWeekend = werkrooster.dataOpslaanDienstenWeekend();
@@ -672,13 +621,23 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             bestandStream.saveData(dataWeek, dataWeekend);
         } catch (IOException e) {
 
-        }
+        }*/
         dispose();
     }//GEN-LAST:event_jaKnopActionPerformed
 
     private void annulerenKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annulerenKnopActionPerformed
-        wijzigingenDialog.setVisible(false);
+        wijzigingenDialog.dispose();
     }//GEN-LAST:event_annulerenKnopActionPerformed
+
+    private void bewerkDataKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bewerkDataKnopActionPerformed
+        bewerkenFrame.setVisible(true);
+    }//GEN-LAST:event_bewerkDataKnopActionPerformed
+
+    private void annulerenDataKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annulerenDataKnopActionPerformed
+        leesData();
+        nietOpgeslagenBewerkingen = false;
+        bewerkenFrame.dispose();
+    }//GEN-LAST:event_annulerenDataKnopActionPerformed
 
     /**
      * @param args the command line arguments
@@ -691,7 +650,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -762,9 +721,8 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
      * Toont de dagen van de maand in de interface. Per dag wordt een combobox
      * gemaakt om de dienst te kiezen.
      */
-    private boolean toonMaand() {
+    private void toonMaand() {
         int maand, jaar;
-        boolean gevuld = false;
         comboArray.clear();
         if (maandComboBox.getSelectedIndex() >= 0) {
             toonDienstenButton.setEnabled(true);
@@ -849,9 +807,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                     maandPanel.add(dagPanel);
                 }
             }
-            gevuld = true;
         }
-        return gevuld;
     }
 
     /**
@@ -958,7 +914,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         ArrayList<Dienst> dienstenWeekNieuw = new ArrayList<>();
         ArrayList<Dienst> dienstenWeekendNieuw = new ArrayList<>();
         for (int i = weekTabel.getRowCount() - 1; i >= 0; i--) {
-            if (weekTabel.getValueAt(i, 0) == null) {
+            if (weekTabel.getValueAt(i, 0).equals("")) {
                 ((DefaultTableModel) weekTabel.getModel()).removeRow(i);
             }
         }
@@ -974,10 +930,16 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 tijdTot = " " + tijdTot;
             }
             opmerkingen = (String) weekTabel.getValueAt(i, 3);
+            if (tijdVan.equals("")) {
+                tijdVan = "00:00";
+            }
+            if (tijdTot.equals("")) {
+                tijdTot = "00:00";
+            }
             dienstenWeekNieuw.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
         }
         for (int i = weekendTabel.getRowCount() - 1; i >= 0; i--) {
-            if (weekendTabel.getValueAt(i, 0) == null) {
+            if (weekendTabel.getValueAt(i, 0).equals("")) {
                 ((DefaultTableModel) weekendTabel.getModel()).removeRow(i);
             }
         }
@@ -993,9 +955,26 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 tijdTot = " " + tijdTot;
             }
             opmerkingen = (String) weekendTabel.getValueAt(i, 3);
+            if (tijdVan.equals("")) {
+                tijdVan = "00:00";
+            }
+            if (tijdTot.equals("")) {
+                tijdTot = "00:00";
+            }
             dienstenWeekendNieuw.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
         }
         werkrooster.vulDiensten(dienstenWeekNieuw, dienstenWeekendNieuw);
+        dienstenWeek = werkrooster.geefDienstenWeek();
+        dienstenWeekend = werkrooster.geefDienstenWeekend();
+        String dataWeek, dataWeekend;
+        dataWeek = werkrooster.dataOpslaanDienstenWeek();
+        dataWeekend = werkrooster.dataOpslaanDienstenWeekend();
+        try {
+            bestandStream.saveData(dataWeek, dataWeekend);
+        } catch (IOException e) {
+
+        }
+        nietOpgeslagenBewerkingen = false;
         dagenPanel.removeAll();
         dagenPanel.updateUI();
         maandComboBox.setSelectedIndex(-1);
@@ -1008,16 +987,19 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton annulerenDataKnop;
     private javax.swing.JButton annulerenKnop;
-    private javax.swing.JButton bewaarDataKnop;
     private javax.swing.JButton bewaarGegevensKnop;
+    private javax.swing.JButton bewerkDataKnop;
     private javax.swing.JPanel bewerkDienstenPanel;
-    private javax.swing.JPanel bewerkenTabPanel;
+    private javax.swing.JFrame bewerkenFrame;
+    private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel dagenPanel;
     private javax.swing.JPanel dataOpslaanPanel;
     private javax.swing.JPanel dienstKnoppenPanel;
     private javax.swing.JPanel dienstenTabPanel;
     private javax.swing.JTabbedPane hoofdPanel;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
@@ -1030,12 +1012,12 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
     private javax.swing.JPanel maandTabPanel;
     private javax.swing.JButton neeKnop;
     private javax.swing.JButton okButton;
+    private javax.swing.JButton okDataKnop;
     private javax.swing.JButton overButton;
     private javax.swing.JFrame overFrame;
     private javax.swing.JLabel overWerkroosterNWLabel;
     private javax.swing.JButton pasDataToeKnop;
     private javax.swing.JButton resetButton;
-    private javax.swing.JTextField statusTekstVeld;
     private javax.swing.JLabel titelLabel;
     private javax.swing.JLabel titelWijzigingenLabel;
     private javax.swing.JButton toonDienstenButton;

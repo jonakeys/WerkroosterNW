@@ -54,6 +54,9 @@ public class BestandStream {
                         tijdTot = " " + tijdTot;
                     }
                     opmerkingen = s.nextLine().trim();
+                    if (opmerkingen.contains("_")) {
+                        opmerkingen = "";
+                    }
                     dienstenWeek.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
                 }
             }
@@ -78,6 +81,9 @@ public class BestandStream {
                         tijdTot = " " + tijdTot;
                     }
                     opmerkingen = s.nextLine().trim();
+                    if (opmerkingen.contains("_")) {
+                        opmerkingen = "";
+                    }
                     dienstenWeekend.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
                 }
             }
@@ -89,8 +95,9 @@ public class BestandStream {
     }
 
     /**
-     * Slaat de gegevens van de diensten van de week en het weekend op naar
-     * de twee bestanden.
+     * Slaat de gegevens van de diensten van de week en het weekend op naar de
+     * twee bestanden.
+     *
      * @param dataWeek Gegevens van diensten in de week
      * @param dataWeekend Gegevens van diensten in het weekend
      * @throws IOException
@@ -110,6 +117,7 @@ public class BestandStream {
 
     /**
      * Geeft de diensten in de week.
+     *
      * @return Diensten in de week
      */
     public ArrayList inladenWeek() {
@@ -118,6 +126,7 @@ public class BestandStream {
 
     /**
      * Geeft de diensten in het weekend.
+     *
      * @return Diensten in het weekend
      */
     public ArrayList inladenWeekend() {
