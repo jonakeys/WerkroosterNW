@@ -53,7 +53,7 @@ public class BestandStream {
                     if (tijdVan.length() == 4) {
                         tijdVan = " " + tijdVan;
                     }
-                    tijdTot = gs.volgendeLijn();
+                    tijdTot = gs.volgendeRegel();
                     if (tijdTot.length() == 4) {
                         tijdTot = " " + tijdTot;
                     }
@@ -165,6 +165,11 @@ public class BestandStream {
         }
     }
     
+    /**
+     * Check of bestand bestaat.
+     * @param bestandsnaam naam van te checken bestand
+     * @return true als bestand al bestaat
+     */
     public boolean bestandBestaat(String bestandsnaam) {
         File bestand = new File(bestandsnaam);
         return bestand.exists();

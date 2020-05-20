@@ -27,6 +27,8 @@ public class WerkroosterNW {
     /**
      * Vult de lijsten (dienstenWeek en dienstenWeekend) met namen van diensten,
      * tijden en opmerkingen.
+     * @param week lijst met weekdiensten
+     * @param weekend lijst met weekenddiensten
      */
     public void vulDiensten(ArrayList<Dienst> week, ArrayList<Dienst> weekend) {
         /*
