@@ -6,7 +6,6 @@
 package werkroosternw;
 
 import java.io.*;
-import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
@@ -37,8 +36,45 @@ public class BestandStream {
      * @throws IOException
      */
     private void openData() throws IOException {
-        Scanner s = null;
+        try {
+            GluurScanner gs = new GluurScanner("diensten.dat");
+            boolean isWeek = true;
+            if (gs.isBestandGeladen()) {
+                while (gs.hasNext()) {
+                    String naam, tijdVan, tijdTot, opmerkingen;
+                    if (gs.gluur().equals("[week]")) {
+                        gs.volgende();
+                    } else if (gs.gluur().equals("[weekend]")) {
+                        isWeek = false;
+                        gs.volgende();
+                    }
+                    naam = gs.volgende();
+                    tijdVan = gs.volgende();
+                    if (tijdVan.length() == 4) {
+                        tijdVan = " " + tijdVan;
+                    }
+                    tijdTot = gs.volgendeLijn();
+                    if (tijdTot.length() == 4) {
+                        tijdTot = " " + tijdTot;
+                    }
+                    opmerkingen = gs.volgende();
+                    if (opmerkingen.contains("_")) {
+                        opmerkingen = "";
+                    }
+                    if (isWeek) {
+                        dienstenWeek.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+                    } else {
+                        dienstenWeekend.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+                    }
+                }
 
+                gs.close();
+            }
+        } catch (IOException e) {
+
+        }
+
+        /*
         try {
             s = new Scanner(new BufferedReader(new FileReader("dienstenWeek.dat")));
             while (s.hasNext()) {
@@ -92,6 +128,7 @@ public class BestandStream {
                 s.close();
             }
         }
+         */
     }
 
     /**
@@ -103,16 +140,34 @@ public class BestandStream {
      * @throws IOException
      */
     public void saveData(String dataWeek, String dataWeekend) throws IOException {
-        File bestandWeek = new File("dienstenWeek.dat");
-        File bestandWeekend = new File("dienstenWeekend.dat");
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(bestandWeek))) {
-            out.write(dataWeek);
+        File bestand = new File("diensten.dat");
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(bestand))) {
+            String data = "[week]\n" + dataWeek + "[weekend]\n" + dataWeekend;
+            out.write(data);
             out.close();
         }
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(bestandWeekend))) {
-            out.write(dataWeekend);
+    }
+    
+        /**
+     * Schrijf de informatie van dagen van de maand met bijbehorend de dienst,
+     * werktijden en opmerkingen naar een bestand.
+     *
+     * @param bestandsnaam Naam van het bestand
+     * @param tekst Tekst die moet worden weggeschreven
+     * @throws IOException Mocht er een fout optreden, wordt deze afgevangen
+     */
+    public void schrijfBestand(String bestandsnaam, String tekst)
+            throws IOException {
+        File bestand = new File(bestandsnaam);
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(bestand))) {
+            out.write(tekst);
             out.close();
         }
+    }
+    
+    public boolean bestandBestaat(String bestandsnaam) {
+        File bestand = new File(bestandsnaam);
+        return bestand.exists();
     }
 
     /**
