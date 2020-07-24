@@ -181,7 +181,6 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         bestandBestaatDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         bestandBestaatDialog.setTitle("Bestand bestaat");
         bestandBestaatDialog.setMinimumSize(new java.awt.Dimension(400, 200));
-        bestandBestaatDialog.setPreferredSize(new java.awt.Dimension(400, 200));
         bestandBestaatDialog.setSize(new java.awt.Dimension(400, 200));
 
         bestandBestaatTopPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -191,7 +190,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
 
         bestandBestaatDialog.getContentPane().add(bestandBestaatTopPanel, java.awt.BorderLayout.PAGE_START);
 
-        bestandBestaatMiddlePanel.setLayout(new java.awt.GridLayout());
+        bestandBestaatMiddlePanel.setLayout(new java.awt.GridLayout(1, 0));
 
         jScrollPane3.setOpaque(false);
 
@@ -228,7 +227,6 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         overFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         overFrame.setTitle("Over WerkroosterNW");
         overFrame.setMinimumSize(new java.awt.Dimension(500, 490));
-        overFrame.setPreferredSize(new java.awt.Dimension(500, 490));
         overFrame.setSize(new java.awt.Dimension(500, 490));
         overFrame.getContentPane().setLayout(new java.awt.BorderLayout(5, 5));
 
@@ -678,18 +676,18 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
     private void voegToeWeekKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voegToeWeekKnopActionPerformed
         int geselecteerdeRij = weekTabel.getSelectedRow();
         if (geselecteerdeRij >= 0) {
-            weekModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", ""});
+            weekModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", "", ""});
         } else {
-            weekModel.addRow(new Object[]{"", "", "", ""});
+            weekModel.addRow(new Object[]{"", "", "", "", ""});
         }
     }//GEN-LAST:event_voegToeWeekKnopActionPerformed
 
     private void voegToeWeekendKnopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voegToeWeekendKnopActionPerformed
         int geselecteerdeRij = weekendTabel.getSelectedRow();
         if (geselecteerdeRij >= 0) {
-            weekendModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", ""});
+            weekendModel.insertRow(geselecteerdeRij, new Object[]{"", "", "", "", ""});
         } else {
-            weekendModel.addRow(new Object[]{"", "", "", ""});
+            weekendModel.addRow(new Object[]{"", "", "", "", ""});
         }
     }//GEN-LAST:event_voegToeWeekendKnopActionPerformed
 
@@ -940,6 +938,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         maandTekstGebied.setText("");
         ArrayList<String> namen = new ArrayList<>();
         String tekst = "" + kalender.geefMaandJaar() + "\n\n";
+        Double totaalUren = 0.0;
         for (JComboBox c : comboArray) {
             namen.add((String) c.getSelectedItem());
         }
@@ -950,12 +949,14 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                     for (Dienst d : dienstenWeekend) {
                         if (d.geefNaam().equals(namen.get(i))) {
                             tekstDienst = " w dienst " + d.geefTotaal();
+                            totaalUren += d.geefUren();
                         }
                     }
                 } else {
                     for (Dienst d : dienstenWeek) {
                         if (d.geefNaam().equals(namen.get(i))) {
                             tekstDienst = "   dienst " + d.geefTotaal();
+                            totaalUren += d.geefUren();
                         }
                     }
                 }
@@ -966,6 +967,7 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
                 }
             }
         }
+        tekst += "\nTotaal gewerkte uren: " + totaalUren + "\n";
         maandTekstGebied.setText(tekst);
     }
 
@@ -978,11 +980,13 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
         weekModel.addColumn("Naam");
         weekModel.addColumn("Tijd van");
         weekModel.addColumn("Tijd tot");
+        weekModel.addColumn("Uren");
         weekModel.addColumn("Opmerkingen");
         weekTabel = new JTable(weekModel);
         weekendModel.addColumn("Naam");
         weekendModel.addColumn("Tijd van");
         weekendModel.addColumn("Tijd tot");
+        weekendModel.addColumn("Uren");
         weekendModel.addColumn("Opmerkingen");
         weekendTabel = new JTable(weekendModel);
         weekTabelScrollPane.setViewportView(weekTabel);
@@ -1011,15 +1015,17 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             String naam = d.geefNaam().trim();
             String tijdVan = d.geefTijdVan().trim();
             String tijdTot = d.geefTijdTot().trim();
+            Double uren = d.geefUren();
             String opmerkingen = d.geefOpmerkingen().trim();
-            weekModel.addRow(new Object[]{naam, tijdVan, tijdTot, opmerkingen});
+            weekModel.addRow(new Object[]{naam, tijdVan, tijdTot, uren, opmerkingen});
         }
         for (Dienst d : dienstenWeekend) {
             String naam = d.geefNaam().trim();
             String tijdVan = d.geefTijdVan().trim();
             String tijdTot = d.geefTijdTot().trim();
+            Double uren = d.geefUren();
             String opmerkingen = d.geefOpmerkingen().trim();
-            weekendModel.addRow(new Object[]{naam, tijdVan, tijdTot, opmerkingen});
+            weekendModel.addRow(new Object[]{naam, tijdVan, tijdTot, uren, opmerkingen});
         }
     }
 
@@ -1036,7 +1042,8 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             }
         }
         for (int i = 0; i < weekTabel.getRowCount(); i++) {
-            String naam, tijdVan, tijdTot, opmerkingen;
+            String naam, tijdVan, tijdTot, sUren, opmerkingen;
+            Double uren;
             naam = (String) weekTabel.getValueAt(i, 0);
             tijdVan = (String) weekTabel.getValueAt(i, 1);
             if (tijdVan.length() == 4) {
@@ -1046,14 +1053,16 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             if (tijdTot.length() == 4) {
                 tijdTot = " " + tijdTot;
             }
-            opmerkingen = (String) weekTabel.getValueAt(i, 3);
             if (tijdVan.equals("")) {
                 tijdVan = "00:00";
             }
             if (tijdTot.equals("")) {
                 tijdTot = "00:00";
             }
-            dienstenWeekNieuw.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+            sUren = (String)String.valueOf(weekTabel.getValueAt(i, 3));
+            uren = Double.parseDouble(sUren);
+            opmerkingen = (String) weekTabel.getValueAt(i, 4);
+            dienstenWeekNieuw.add(new Dienst(naam, tijdVan, tijdTot, uren, opmerkingen));
         }
         for (int i = weekendTabel.getRowCount() - 1; i >= 0; i--) {
             if (weekendTabel.getValueAt(i, 0).equals("")) {
@@ -1061,7 +1070,8 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             }
         }
         for (int i = 0; i < weekendTabel.getRowCount(); i++) {
-            String naam, tijdVan, tijdTot, opmerkingen;
+            String naam, tijdVan, tijdTot, sUren, opmerkingen;
+            Double uren;
             naam = (String) weekendTabel.getValueAt(i, 0);
             tijdVan = (String) weekendTabel.getValueAt(i, 1);
             if (tijdVan.length() == 4) {
@@ -1071,14 +1081,16 @@ public class WerkroosterNWgui extends javax.swing.JFrame {
             if (tijdTot.length() == 4) {
                 tijdTot = " " + tijdTot;
             }
-            opmerkingen = (String) weekendTabel.getValueAt(i, 3);
             if (tijdVan.equals("")) {
                 tijdVan = "00:00";
             }
             if (tijdTot.equals("")) {
                 tijdTot = "00:00";
             }
-            dienstenWeekendNieuw.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+            sUren = (String)String.valueOf(weekendTabel.getValueAt(i, 3));
+            uren = Double.parseDouble(sUren);
+            opmerkingen = (String) weekendTabel.getValueAt(i, 4);
+            dienstenWeekendNieuw.add(new Dienst(naam, tijdVan, tijdTot, uren, opmerkingen));
         }
         werkrooster.vulDiensten(dienstenWeekNieuw, dienstenWeekendNieuw);
         dienstenWeek = werkrooster.geefDienstenWeek();
