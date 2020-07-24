@@ -110,7 +110,7 @@ public class WerkroosterNW {
             } else {
                 opmerkingen = d.geefOpmerkingen();
             }
-            result += d.geefNaam() + "\t" + d.geefTijdVan() + "\t" + d.geefTijdTot() + "\t" + opmerkingen + "\n";
+            result += d.geefNaam() + "\t" + d.geefTijdVan() + "\t" + d.geefTijdTot() + "\t" + d.geefUren() + "\t " + opmerkingen + "\n";
         }
         return result;
     }
@@ -129,7 +129,7 @@ public class WerkroosterNW {
             } else {
                 opmerkingen = d.geefOpmerkingen();
             }
-            result += d.geefNaam() + "\t" + d.geefTijdVan() + "\t" + d.geefTijdTot() + "\t" + opmerkingen + "\n";
+            result += d.geefNaam() + "\t" + d.geefTijdVan() + "\t" + d.geefTijdTot() + "\t" + d.geefUren() + "\t "+ opmerkingen + "\n";
         }
         return result;
     }

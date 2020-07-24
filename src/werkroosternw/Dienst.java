@@ -17,7 +17,7 @@ public class Dienst {
     private final String tijdVan;
     private final String tijdTot;
     private final String opmerkingen;
-    private final float uren;
+    private final double uren;
 
     /**
      * Creatie van een dienst-object.
@@ -25,14 +25,15 @@ public class Dienst {
      * @param naam Naam van de dienst
      * @param tijdVan Begintijd
      * @param tijdTot Eindtijd
+     * @param uren Uren gewerkt
      * @param opmerkingen Opmerkingen en bijzonderheden
      */
-    public Dienst(String naam, String tijdVan, String tijdTot, String opmerkingen, float uren) {
+    public Dienst(String naam, String tijdVan, String tijdTot, double uren, String opmerkingen) {
         this.naam = naam;
         this.tijdVan = tijdVan;
         this.tijdTot = tijdTot;
+        this.uren = uren;
         this.opmerkingen = opmerkingen;
-	this.uren = uren;
     }
 
     public String geefNaam() {
@@ -47,12 +48,12 @@ public class Dienst {
         return tijdTot;
     }
 
-    public String geefOpmerkingen() {
-        return opmerkingen;
+    public Double geefUren() {
+        return uren;
     }
 
-    public float geefUren() {
-	return uren;
+    public String geefOpmerkingen() {
+        return opmerkingen;
     }
 
     /**

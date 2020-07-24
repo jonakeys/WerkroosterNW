@@ -41,8 +41,8 @@ public class BestandStream {
             boolean isWeek = true;
             if (gs.isBestandGeladen()) {
                 while (gs.hasNext()) {
-                    String naam, tijdVan, tijdTot, opmerkingen;
-                    if (gs.gluur().equals("[week]")) {
+                    String naam, tijdVan, tijdTot, uren, opmerkingen;
+                                        if (gs.gluur().equals("[week]")) {
                         gs.volgende();
                     } else if (gs.gluur().equals("[weekend]")) {
                         isWeek = false;
@@ -53,21 +53,22 @@ public class BestandStream {
                     if (tijdVan.length() == 4) {
                         tijdVan = " " + tijdVan;
                     }
-                    tijdTot = gs.volgendeRegel();
+                    tijdTot = gs.volgende();
                     if (tijdTot.length() == 4) {
                         tijdTot = " " + tijdTot;
                     }
+                    uren = gs.volgendeRegel();
+                    double dUren = Double.parseDouble(uren);
                     opmerkingen = gs.volgende();
                     if (opmerkingen.contains("_")) {
                         opmerkingen = "";
                     }
                     if (isWeek) {
-                        dienstenWeek.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+                        dienstenWeek.add(new Dienst(naam, tijdVan, tijdTot, dUren, opmerkingen));
                     } else {
-                        dienstenWeekend.add(new Dienst(naam, tijdVan, tijdTot, opmerkingen));
+                        dienstenWeekend.add(new Dienst(naam, tijdVan, tijdTot, dUren, opmerkingen));
                     }
                 }
-
                 gs.close();
             }
         } catch (IOException e) {
@@ -142,7 +143,7 @@ public class BestandStream {
     public void saveData(String dataWeek, String dataWeekend) throws IOException {
         File bestand = new File("diensten.dat");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(bestand))) {
-            String data = "[week]\n" + dataWeek + "[weekend]\n" + dataWeekend;
+            String data = "[week]\n" + dataWeek + "[weekend]\n" + dataWeekend ;
             out.write(data);
             out.close();
         }
